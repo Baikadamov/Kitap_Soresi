@@ -1,0 +1,61 @@
+{%extends 'messenger/base.html'%}
+{%block content%}
+{%load static%}
+
+<div class="container mt-5">
+    <div class="filter-container">
+        <div class="filter">
+            <h4>Фильтр</h4>
+            <hr>
+            <h5>По жанрам:</h5>
+
+            {%if genre_selected == 0%}
+            <li class="selected"> Все</li>
+            {%else%}
+            <li><a href="{%url 'booksPage'%}">Все </a></li>
+            {%endif%}
+            {% for g in genre %}
+            {%if g.pk == genre_selected%}
+            <li class="selected"> {{g.name}}</li>
+            {%else%}
+            <li><a href="{{ g.get_absolute_url}}">{{g.name}}</a></li>
+            {%endif%}
+            {% endfor%}
+            <h5>По Авторам:</h5>
+
+            {% for a in author %}
+            {%if a.pk == author_selected%}
+            <li class="selected"> {{a.name}}</li>
+            {%else%}
+            <li><a href="{{ a.get_absolute_url}}">{{a.name}}</a></li>
+            {%endif%}
+            {% endfor%}
+
+        </div>
+        <div class="books-list">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {%for i in books%}
+                <div class="col">
+                    <div class="card h-100">
+                        {%if i.photo %}
+                        <img src="{{i.photo.url}}" class="card-img-top" alt="...">
+                        {%endif%}
+
+                        <div class="card-body">
+                            <h5 class="card-title">{{i.name}}</h5>
+                            <p class="card-text">{{i.author}}</p>
+                            <a class="card-text" href="{{ i.get_absolute_url }} ">читать пост</a>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">Последнее обновление 3 мин. назад</small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{%endblock%}
