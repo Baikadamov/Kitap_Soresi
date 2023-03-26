@@ -1,0 +1,40 @@
+{% extends 'messenger/base.html' %}
+
+{% block content %}
+
+<section id="about" class="about section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-6 col-12"   >
+                <div class="about-img">
+                     <img class="book-picture" src="{{book.photo.url}}" width="350" class="img-fluid">
+                </div>
+            </div>
+            <div class="col-lg-8 col-md-6 col-12 ps-lg-5 mt-md-5"  >
+                <div class="about-text">
+                    <h1>{{book.name}}</h1>
+            <p> {{book.description | linebreaks}}</p>
+                    <a href="#" class="btn btn-warning">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<!--<div class="container">-->
+<!--  <div class="row">-->
+<!--    <div class="col-12 col-md-6" style="background: black ; height: 500px ; ">-->
+<!--      {% if book.photo %}-->
+<!--       <img src="{{book.photo.url}}"   width="100%" alt="">-->
+<!--      {% endif %}-->
+<!--    </div>-->
+<!--    <div class="col-12 col-md-6" style="background: yellow ; height: 500px">-->
+<!--      <h1>{{book.title}}</h1>-->
+<!--      {{book.description | linebreaks}}-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+
+{% endblock %}
