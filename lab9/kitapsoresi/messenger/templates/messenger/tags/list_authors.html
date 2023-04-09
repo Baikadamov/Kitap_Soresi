@@ -1,0 +1,7 @@
+{% for a in author %}
+{%if a.slug == author_selected%}
+<li class="selected"> {{a.name}}</li>
+{%else%}
+<li><a href="{{ a.get_absolute_url}}">{{a.name}}</a></li>
+{%endif%}
+{% endfor%}
