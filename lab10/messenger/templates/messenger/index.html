@@ -1,0 +1,48 @@
+{%extends 'messenger/base.html'%}
+{%block content%}
+{%load static%}
+
+
+<div class="container mt-5 main-content">
+    <div class="row">
+        <div class="col-12 col-md-6 mt-2 d">
+            <div class="  main-text">
+                <h1 style="font-size:80px ; font-weight: bold; font-family: inter;">BOOKS FOR
+                    ALL</h1>
+                <b>
+                    <p>Lorem ipsum — классический текст-«рыба». Является искажённым отрывком из
+                        философского трактата Марка
+                        Туллия
+                        Цицерона «О пределах добра и зла»,</p>
+                </b>
+                <p>
+                    <button class="button-reg  btn btn-dark"> Регистрация</button>
+                </p>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 mt-2 ">
+            <img src="{%static 'messenger/images/mainpic.svg'%}" width="90%">
+        </div>
+    </div>
+</div>
+
+
+<div class="container mt-5">
+    <div class="row g-3">
+        {% for i in books %}
+        <div class="col-sm-6  col-md-4 col-lg-3">
+            <div class="card h-100">
+                {% if i.photo %}
+                <img src="{{i.photo.url}}" class="card-img-top" alt="...">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{i.name}}</h5>
+                    <p class="card-text">{{i.author}}</p>
+                    <a class="btn btn-primary btn-sm " href="{{ i.get_absolute_url }}">Подробнее</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{%endblock%}

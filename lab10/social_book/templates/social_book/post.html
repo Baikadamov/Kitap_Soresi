@@ -1,0 +1,66 @@
+{%extends 'messenger/base.html'%}
+{%load static%}
+{%block content%}
+
+<div class="container mt-5">
+
+    <div class="col-8 mx-auto">
+        <div class="card m-5 p-2" style="width: 25rem;">
+            {% if post.image.url != Null %}
+            <img src="{{post.image.url}}"
+                 alt="image 1" class="w-100  ">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title m-1"><b>Name:</b> @{{post.user}} </a></h5></h5>
+                <p class="card-text"><strong> @{{post.user}} </strong> : {{post.caption}}</p>
+                <hr>
+                <p class="card-text">
+                <hr>
+
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                     aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                ...
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if not post.comments.all%}
+
+                <p>no comments yet</p>
+
+                {% else %}
+
+                {% for comment in post.comments.all%}
+
+                <p>
+                    <strong> {{comment.commenter_name}} </strong>
+                </p>
+                <p>{{comment.comment_body}}</p>
+                <p>{{comment.date_added}}</p>
+                {% endfor %}
+                {% endif %}
+                <hr>
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+{%endblock%}

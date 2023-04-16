@@ -1,0 +1,90 @@
+{%extends 'messenger/base.html'%}
+{%load static%}
+{%block content%}
+
+
+<div class="container mt-5">
+    <div class="feed">
+        <div class="posts">
+            <div class="d-flex justify-content-center row">
+                <h3 class="col-10">Новые посты</h3>
+                <div class="  col-10 mb-3 d-flex">
+                    <a class="text-decoration-none  text-info" href="{% url 'feed' %}"> Все новости </a>
+                    <a class="text-decoration-none ms-auto text-warning" href="{% url 'subs_posts' %}"> Подписки</a>
+                </div>
+                {% for post in posts reversed%}
+                <div class="col-10">
+                    <div class="card mb-5">
+                        <h5 class="px-3 pt-2"><a class="text-decoration-none text-dark" href="/profile/{{post.user}}">
+                            @{{post.user}} </a></h5>
+                        <hr style="margin-bottom: 0px ; margin-top: 4px">
+                        {% if post.image.url != Null %}
+                        <img src="{{post.image.url}}"
+                             alt="image 1" class="w-100  ">
+                        {% endif %}
+                        <div class="card-body">
+                            {% if post.no_of_likes == 0 %}
+                            <span class="card-title">No likes</span>
+                            {% elif post.no_of_likes == 1 %}
+                            <span class="card-title">Liked by {{post.no_of_likes}} person </span>
+                            {% else %}
+                            <span class="card-title">Liked by {{post.no_of_likes}} people </span>
+                            {% endif %}
+                            <a href="/like-post?post_id={{post.id}}">
+                                {% if post.user == user.username %}
+                                <img src="{%static 'social_book/images/heart2.svg'%}" width="25" alt="">
+                                {% else %}
+                                <img src="{%static 'social_book/images/heart2.svg'%}" width="25" alt="">
+                                {% endif %}
+                            </a>
+                            <p class="card-text"><strong> @{{post.user}} </strong> : {{post.caption}}</p>
+                            <p class="card-text"><small class="text-muted">{{post.created_at}}</small></p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+        <div class="friends ">
+            <div class="  mb-3">
+                <div class="nav-item dropdown d-flex">
+                    <button class="btn btn-warning dropdown-toggle ms-auto " role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        Upload new Post
+                    </button>
+                    <div class="dropdown-menu p-3">
+                        <form action="/upload" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="mt-3">
+                                <h5>Опубликовать новый пост</h5>
+                            </div>
+                            <div class="mt-3">
+                                <input name="image_upload" type="file" class="form-control">
+                            </div>
+                            <div class="mt-3">
+                                <label for="caption">Введите текст</label>
+                                <textarea name="caption" id="caption" class="form-control"
+                                          rows="3"> {{user_profile.bio}}</textarea>
+                            </div>
+                            <div class="mt-3">
+                                <button type="submit" class="btn  " style="background: #E4F64A">Upload</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+            <div class="card ">
+                <div class="card-body    ">
+                    <h5 class="card-title">Users you can Follow</h5>
+                    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to
+                        additional content. This content is a little bit longer.</p>
+                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{%endblock%}
