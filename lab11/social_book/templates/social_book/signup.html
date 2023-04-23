@@ -1,0 +1,44 @@
+{%extends 'messenger/base.html'%}
+{%load static%}
+{%block content%}
+
+<div class="container mt-5">
+
+
+    <div class="row">
+       <div class="col-4 mx-auto">
+            <h4>SIGNUP PAGE</h4>
+            <div>
+                {% for m in messages %}
+                <p class="text-danger">{{m}}</p>
+                {% endfor %}
+            </div>
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="mt-3 form-group">
+                    <label>Username</label>
+                    <input type="text" required name="username" class="form-control" placeholder="name">
+                </div>
+                <div class="mt-3 form-group">
+                    <label>Email</label>
+                    <input type="email" required name="email" class="form-control" placeholder="Password">
+                </div>
+                <div class="mt-3 form-group">
+                    <label>Password</label>
+                    <input type="password" required name="password" class="form-control" placeholder="Password">
+                </div>
+                <div class="mt-3 form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" required name="password2" class="form-control" placeholder="Password">
+                </div>
+                <div class="mt-3">
+                    <button class="btn btn-outline-danger" type="sumbit">signup</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+{%endblock%}

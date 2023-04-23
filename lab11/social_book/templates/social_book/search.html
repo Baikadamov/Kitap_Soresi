@@ -1,0 +1,38 @@
+{%extends 'messenger/base.html'%}
+{%load static%}
+{%block content%}
+
+<div class="container mt-5">
+
+    <div class="col-8 mx-auto">
+        <div class="row">
+            {% if username_profile_list %}
+            {% for users in username_profile_list %}
+            <div class="card mt-3 mb-3">
+                <div class="row ">
+                    <div class="col-2">
+                        <img src="{{users.profileimg.url}}" class="img-fluid " alt="...">
+                    </div>
+                    <div class="col-10">
+                        <div class="card-body">
+                            <h5 class="card-title">{{users.user}}</h5>
+                            <p class="card-text">{{users.bio|truncatewords:25}}</p>
+                            <p class="card-text">{{users.location }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="text-center">
+                <p class="text-danger">Ничего не найдено :( </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+
+</div>
+
+
+{%endblock%}
