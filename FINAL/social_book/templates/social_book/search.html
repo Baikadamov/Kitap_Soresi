@@ -1,0 +1,152 @@
+{%extends 'messenger/base.html'%}
+{%load static%}
+{%block content%}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-10 mx-auto ">
+            <div class="career-search mb-60">
+                <form action="/search" method="post" class="career-form mb-60">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 col-lg-3 my-3">
+                            <div class="input-group position-relative">
+                                <input type="text" class="form-control" name="username" placeholder="Найти пользователя"
+                                       id="keywords">
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3 my-3">
+                            <div class=" ">
+                                <button class="  custom-select   dropdown-toggle" type="button" id="dropdownMenuButton2"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    По Интересам
+                                </button>
+                                <ul class="dropdown-menu " aria-labelledby="dropdownMenuButton2">
+                                    {% for i in interest %}
+                                    <li><a class="text-dark dropdown-item" href="{{i.get_absolute_url}}">{{i.name}}</a>
+                                        {% endfor%}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3 my-3">
+                            <div class=" ">
+                                <button class="  custom-select   dropdown-toggle" type="button" id="dropdownMenuButton1"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    По городам
+                                </button>
+                                <ul style="background: #7182DF" class="dropdown-menu "
+                                    aria-labelledby="dropdownMenuButton1">
+                                    {% for c in city %}
+                                    <li><a class="text-dark dropdown-item"
+                                           href="{{ c.get_absolute_url}}">{{c.name}}</a>
+                                        {% endfor%}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3 my-3">
+                            <button type="submit" class="btn btn-lg btn-block btn-light btn-custom" id="contact-submit">
+                                Поиск
+                            </button>
+                            <a href="{% url 'search' %}" class="btn btn-outline-light btn-block ">
+                                Показать всех
+                            </a>
+                        </div>
+
+                    </div>
+                </form>
+
+                <div class="filter-result">
+                    <p class="mb-30 ff-montserrat">Найдено пользователей : {{user_count}}</p>
+
+                    {% if username_profile_list %}
+                    {% for users in page_object %}
+                    <div class="job-box d-md-flex align-items-center justify-content-between mb-30">
+                        <div class="job-left my-4 d-md-flex align-items-center flex-wrap">
+                            <div class="  mr-md-4 mb-md-0 mb-4 mx-auto mx-md-0 d-md-none d-lg-flex">
+                                {% if users.profileimg.url != null %}
+                                <img src="{{users.profileimg.url}}" width="75" class=" " alt="...">
+                                {% endif %}
+                            </div>
+                            <div class="job-content">
+                                <h5 class="text-center text-md-left mx-3">{{users.user.username}}</h5>
+                                <ul class="d-md-flex flex-wrap text-capitalize ff-open-sans">
+                                    <li class="mr-md-4">
+                                        <i class="zmdi zmdi-pin mr-2"></i> {{users.city }}
+                                        <i class="zmdi zmdi-pin mr-2"></i> {{users.contacts }}
+                                    </li>
+                                    <li class="mr-md-4">
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="job-right my-4 flex-shrink-0">
+                            <a href="{% url 'profile' users.user %}"
+                               class="btn d-block w-100 d-sm-inline-block btn-light">Посмотреть профиль</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="text-center">
+                        <p class="text-danger">Ничего не найдено :( </p>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+            </nav>
+            <nav aria-label="Пример навигации по страницам">
+                <ul class="pagination justify-content-end">
+
+                    {% if page_object.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{page_object.previous_page_number}}">Назад</a>
+                    </li>
+                    {% endif %}
+
+                    {% for p in page_object.paginator.page_range%}
+                    {% if page_object.number == p%}
+                    <li class="page-item active"><a class="page-link" href="#}">{{p}}</a></li>
+                    {%elif p >= page_object.number|add:-2 and p <= page_object.number|add:2 %}
+                    <li class="page-item"><a class="page-link" href="?page={{p}}">{{p}}</a></li>
+                    {%endif%}
+                    {% endfor %}
+
+                    {% if page_object.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{page_object.next_page_number}}">Вперед</a>
+                    </li>
+                    {% endif %}
+
+                </ul>
+            </nav>
+
+            <!-- START Pagination -->
+            <!--                    <nav aria-label="Page navigation">-->
+            <!--                        <ul class="pagination pagination-reset justify-content-center">-->
+            <!--                            <li class="page-item disabled">-->
+            <!--                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">-->
+            <!--                                    <i class="zmdi zmdi-long-arrow-left"></i>-->
+            <!--                                </a>-->
+            <!--                            </li>-->
+            <!--                            <li class="page-item"><a class="page-link" href="#">1</a></li>-->
+            <!--                            <li class="page-item d-none d-md-inline-block"><a class="page-link" href="#">2</a></li>-->
+            <!--                            <li class="page-item d-none d-md-inline-block"><a class="page-link" href="#">3</a></li>-->
+            <!--                            <li class="page-item"><a class="page-link" href="#">...</a></li>-->
+            <!--                            <li class="page-item"><a class="page-link" href="#">8</a></li>-->
+            <!--                            <li class="page-item">-->
+            <!--                                <a class="page-link" href="#">-->
+            <!--                                    <i class="zmdi zmdi-long-arrow-right"></i>-->
+            <!--                                </a>-->
+            <!--                            </li>-->
+            <!--                        </ul>-->
+            <!--                    </nav>-->
+            <!-- END Pagination -->
+        </div>
+    </div>
+
+</div>
+
+{%endblock%}

@@ -1,0 +1,57 @@
+{% extends 'messenger/base.html' %}
+
+{% block content %}
+
+<section class="about section-padding">
+    <div class="container p-3 ">
+        <div class="row">
+            <div class="col-lg-6 col-md-12 col-12  ">
+                <div class="d-flex ">
+                    <img class="book-picture mx-auto " width="400" src="{{book.photo.url}}">
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-12 col-12  px-0">
+                <div class="about-text mt-1 mx-auto">
+                    <h1>{{book.name.capitalize}}</h1>
+                    <hr>
+                    <h5><strong>Автор: </strong> {{book.author.name.capitalize }}</h5>
+                    <h6><strong>Жанр: </strong>{% for genre in book.genre.all %}
+                        {{ genre.name }}
+                        {% endfor %}</h6>
+                    <p><strong>Описание: </strong>{{book.description }}</p>
+                    <p><strong>Цена: </strong>{{book.price }} Тенге</p>
+                    <p><strong>Опубликовал: </strong>
+                        <a href="/profile/{{book.user}}" class="text-info">
+                            {{book.user}}</a></p>
+                    {% if book.user.username == user.username%}
+                    <form action="/main/deletebook/" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="pk" value="{{book.id}}">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                            Удалить книгу
+                        </button>
+                    </form>
+                    {% endif %}
+                    <hr>
+                    {% if request.user.is_authenticated %}
+                    <form action="/main/addToWishList" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" value="{{user}}" name="user"/>
+                        <input type="hidden" value="{{book.slug}}" name="book_slug"/>
+                        <button type="submit" class="btn  btn-sm text-white" style=" background: #4e63d7">
+                            {{ button_text }} Добавить в виш-лист/
+                            Remove from wish-list
+                        </button>
+                    </form>
+                    <br>
+                    <!--            <a href="#">Добавить в мою библиотеку</a>-->
+                    <br>
+                    <!--            <a href="/main/addCommentPage">Комментировать</a>-->
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

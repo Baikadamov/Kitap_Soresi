@@ -1,0 +1,205 @@
+{%extends 'messenger/base.html'%}
+{%load static%}
+{%block content%}
+
+
+<section>
+    <div class="container py-3">
+        <div class="chat-messenger">
+            <div class="chat-info ">
+                <div class="card">
+                    <div class="rounded-top text-white d-flex flex-row"
+                         style="background-color: #E4F64A; height:200px;">
+                        <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
+                            <img src="{{friend.profile.profileimg.url}}"
+                                 alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2"
+                                 style="width: 150px; z-index: 1">
+                            {% if user.username == user_profile.user.username %}
+                            <a href="/profile/{{friend.profile.user}}" class="btn btn-dark" data-mdb-ripple-color="dark"
+                               style="z-index: 1;">
+                                View profile
+                            </a>
+                            {% endif %}
+                        </div>
+                        <div class="ms-3 text-dark" style="margin-top: 130px;">
+                            <h5>{{friend.profile.user.username}}</h5>
+                            <p>{{friend.profile.location}}</p>
+                        </div>
+                    </div>
+                    <div class="card-body  text-black">
+                        <div class="mb-5">
+                            <p class="lead fw-normal mb-1 text-end">About</p>
+                            <div class="p-4 " style="background-color: #f8f9fa;">
+                                <p class="text-end">{{friend.profile.bio}}</p>
+                                <p class="text-end">{{friend.profile.id}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="chat-box">
+                <div style="padding-right: 60px">
+                    <div class="card" style="border-radius: 15px;">
+                        <div
+                                class="card-header d-flex justify-content-between align-items-center p-3  border-bottom-0"
+                                style="border-top-left-radius: 15px; border-top-right-radius: 15px; background: #E4F64A">
+                            {% if friend.profile.profileimg.url != null %}
+                            <img src="{{friend.profile.profileimg.url}}" class="img-rounded" width="50" height="50"
+                                 alt="">
+                            {% endif %}
+                            <i class="fas fa-angle-left"></i>
+                            <p class="mb-0 fw-bold">Live chat with {{friend.profile.user}} </p>
+                            <p class="mb-0 fw-bold"> {{user}} </p>
+                            <i class="fas fa-times"></i>
+                        </div>
+                        <div class="card-body">
+                            <div class="chat-body" id="chat-body" style="overflow-y:scroll; height:350px;">
+
+
+                                {% for chat in chats %}
+                                {% if chat.msg_sender == user and chat.msg_receiver == profile %}
+
+                                <div class="chat-box-sent">
+                                    {{chat}}
+                                </div>
+
+                                {% elif chat.msg_sender == profile and chat.msg_receiver == user %}
+
+                                <div class="chat-box-received">
+                                    {{chat}}
+                                </div>
+
+                                {% endif %}
+
+
+                                {% endfor %}
+
+
+                                <div class="chat-box-sent" id="chat-box-sent" style="display: none">
+
+                                </div>
+
+
+                            </div>
+
+                            <div class="form-outline mt-2">
+                                <form action="" id="myform" method="POST">
+                                    {% csrf_token %}
+                                    {{form.body}}
+                                    <button type="submit" id="submit" class="btn btn-primary mt-3">Send</button>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+</section>
+
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    const csrftoken = getCookie('csrftoken');
+
+
+    let form = document.getElementById("myform")
+
+    form.addEventListener("submit", sendChat)
+
+    function sendChat(e) {
+        e.preventDefault()
+        let chatMessage = document.getElementById("id_body").value
+        console.log(chatMessage)
+
+        const data = {msg: chatMessage};
+
+        let url = "{% url 'sent_msg' friend.profile.id %}"
+
+
+        fetch(url, {
+            method: 'POST', // or 'PUT'
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                let chat_body = document.getElementById('chat-body')
+                let chatMessageBox = document.createElement("div")
+                chatMessageBox.classList.add("chat-box-sent")
+                chatMessageBox.innerText = data
+                chat_body.append(chatMessageBox)
+                document.getElementById("id_body").value = ""
+            }).catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+
+    setInterval(receiveMessages, 3000)
+
+    let counter = {{num}}
+
+    function receiveMessages() {
+        let url = "{% url 'rec_msg' friend.profile.id %}"
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                if (data.length == 0) {
+                } else {
+                    let lastMsg = data[data.length - 1]
+
+                    if (counter == data.length) {
+                        console.log("there is no new chat")
+                    } else {
+
+                        let chat_body = document.getElementById('chat-body')
+                        let chatMessageBox = document.createElement("div")
+
+                        chatMessageBox.classList.add("chat-box-received")
+                        chatMessageBox.innerText = lastMsg
+                        chat_body.append(chatMessageBox)
+                        document.getElementById("id_body").value = ""
+                        console.log()
+                        console.log
+                    }
+                }
+                counter = data.length
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
+    }
+
+
+</script>
+
+
+{%endblock%}

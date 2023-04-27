@@ -1,0 +1,49 @@
+{%extends 'messenger/base.html'%}
+{%load static%}
+{%block content%}
+
+<div class="container">
+    <div class="container-fluid mt-5 ">
+        <div class="row d-flex justify-content-center align-items-center ">
+            <div class="col-md-9 col-lg-6 col-xl-5">
+                <img src="{%static 'messenger/images/signin2.svg'%}"
+                     class="img-fluid" width="100%" alt="Sample image">
+            </div>
+            <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <div>
+                        {% for m in messages %}
+                        <p class="text-danger">{{m}}</p>
+                        {% endfor %}
+                    </div>
+                    <div class="form-outline mt-3 mb-3">
+                        <h4>Войти в аккаунт</h4>
+                    </div>
+                    <!-- Email input -->
+                    <div class="mt-3 form-group">
+                        <label>Имя пользователя</label>
+                        <input type="text" required name="username" class="form-control" placeholder="name">
+                    </div>
+                    <div class="mt-3 form-group">
+                        <label>Пароль</label>
+                        <input type="password" required name="password" class="form-control" placeholder="Password">
+                    </div>
+
+                    <div class="text-center text-lg-start mt-3 pt-2">
+                        <button type="sumbit" class="btn text-white  "
+                                style="padding-left: 2.5rem; padding-right: 2.5rem; background: #BA68C8">Войти
+                        </button>
+                        <p class="small fw-bold mt-2 pt-1 mb-0">Еще нет аккаунта?
+                            <a href="{% url 'signup' %}"
+                               class="link-danger">Зарегистрироваться</a>
+                        </p>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{%endblock%}
