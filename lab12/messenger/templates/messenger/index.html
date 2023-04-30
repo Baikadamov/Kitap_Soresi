@@ -1,0 +1,87 @@
+{%extends 'messenger/base.html'%}
+{%block content%}
+{%load static%}
+
+
+<div class="container mt-5 main-content">
+    <div class="row">
+        <div class="col-12 col-md-6 mt-2 d">
+            <div class="  main-text">
+                <h1 style="font-size:80px ; font-weight: bold; font-family: inter;">BOOKS FOR
+                    ALL</h1>
+                <b>
+                    <p>Добро пожаловать в мессенджер для обмена книг! Здесь вы можете найти интересующую вас литературу
+                        и обменяться книгами с другими людьми. Наша платформа создана для тех, кто любит читать и хочет
+                        расширить свою библиотеку</p>
+                </b>
+                <p>
+                    {% if request.user.is_authenticated %}
+                    {% else %}
+                    <a href="{% url 'signup' %}" class="button-reg btn btn-dark"> Регистрация</a>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 mt-2 ">
+            <img src="{%static 'messenger/images/mainpic.svg'%}" width="90%">
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="px-4 text-center">
+        <h2 class="display-5 fw-bold">Kitap<span style="color: #E4F64A">Soresi </span></h2>
+        <div class="col-lg-10 mx-auto">
+            <p class="lead ">Чтобы начать обмен книгами, зарегистрируйтесь на нашей платформе и создайте свой
+                профиль. Затем вы сможете добавлять книги в свою библиотеку, просматривать книги, доступные для обмена,
+                и связываться с другими пользователями, чтобы договориться о встрече и обмене книгами.
+
+                Мы уверены, что наш мессенджер станет незаменимым помощником для всех, кто увлекается чтением и хочет
+                обогатить свою библиотеку новыми книгами. Присоединяйтесь к нашей платформе и начните обмениваться
+                книгами прямо сейчас!</p>
+        </div>
+    </div>
+    <hr>
+</div>
+
+
+<div class="container mt-2">
+    <div class="row g-3" style="padding: 80px">
+        <p class="text-center mb-0" style="font-size: 30px">Список популярных книг</p>
+        {% for i in books %}
+        {% if forloop.counter <= 4 %}
+        <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="card h-100 card-anim ">
+                {% if i.photo %}
+                <img src="{{i.photo.url}}" class="card-img-top  " style="object-fit: cover ; height:  350px" alt="...">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{i.name}}</h5>
+                    <p class="card-text">{{i.author}}</p>
+                    <a class="btn  btn-sm " style="background: #E4F64A" href="{{ i.get_absolute_url }}">Подробнее</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        {% endif %}
+        {% endfor %}
+        <p class="text-center"><a href="{% url 'booksPage' %}" class="btn  "
+                                  style="width: 200px;background: #E4F64A">
+            Посмотреть все</a></p>
+    </div>
+</div>
+
+
+<div>
+    <footer class="py-3 my-4 border-top">
+        <ul class="nav justify-content-center pb-1 mb-1">
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Home</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Features</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Pricing</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">FAQs</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">About</a></li>
+        </ul>
+        <p class="text-center text-muted">© 2023 Snezhana & Maksat</p>
+    </footer>
+</div>
+{%endblock%}

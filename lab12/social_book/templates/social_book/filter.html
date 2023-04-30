@@ -1,0 +1,20 @@
+{%extends 'messenger/base.html'%}
+{%load static%}
+{%block content%}
+<div class="container mt-5">
+    {% for a in city %}
+    <li><a href="{{ a.get_absolute_url}}">{{a.name}}</a></li>
+    {% endfor%}
+</div>
+<div class="container mt-5">
+    {%for u in username_profile_list%}
+    <div class="col">
+        <div class="card ">
+            <div class="card-body">
+                <h5 class="card-title">{{u}}</h5>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{%endblock%}

@@ -1,0 +1,38 @@
+{% extends 'messenger/base.html' %}
+{% block content %}
+{% load static %}
+{% load messenger_tags %}
+
+<div class="container mt-5 mb-5">
+    <h6 class="text-center display-6">Список желаемых книг</h6>
+    <p class="text-center lead">Никогда не забывайте о тех книгах, которые вы бы хотели прочитать! На нашей странице с закладками вы можете
+        сохранять названия и авторов своих любимых книг, а также отмечать, какие книги уже прочитаны. Начните свой
+        список прямо сейчас и не упустите свои любимые книги!</p>
+    <hr>
+    <div class="row g-4">
+        {% for b in books_list %}
+        {% for w in wish_list %}
+        {% if b.slug == w.book_slug %}
+        <div class="col-sm-6  col-md-4 col-lg-3">
+            <div class="card   h-100">
+                {% if b.photo %}
+                <img src="{{b.photo.url}}" class="card-img-top  " style="object-fit: cover ; height:  350px" alt="...">
+                {% endif %}
+                <div class="card-body">
+                    <b>Название: </b> {{b.name}}
+                    <br>
+                    <b>Автор: </b>{{b.author}}
+                    <br>
+                    <b>Цена: </b>{{b.price}} тг
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-primary btn-sm " href="{{ b.get_absolute_url }}">Подробнее</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
+    </div>
+</div>
+{%endblock%}

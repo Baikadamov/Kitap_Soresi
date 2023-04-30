@@ -1,0 +1,326 @@
+{%extends 'messenger/base.html'%}
+{%load static%}
+{%block content%}
+
+
+<div class="container mt-5">
+    <div class="feed">
+        <div class="posts">
+            <div class="d-flex justify-content-center row">
+                <h3 class="col-10">Новые посты</h3>
+                <div class="  col-10 mb-3 d-flex">
+                    <a class="text-decoration-none  text-info" href="{% url 'feed' %}"> Все новости </a>
+                    <a class="text-decoration-none ms-auto text-warning" href="{% url 'subs_posts' %}"> Подписки</a>
+                </div>
+                {% for post in posts reversed%}
+                <div class="col-10">
+                    <div class="card mb-5">
+                        <div class="d-flex px-3 pt-2">
+                            <div>
+                                <h5>
+                                    <a class="text-decoration-none text-dark"
+                                       href="/profile/{{post.user}}">
+                                        @{{post.user}} </a></h5>
+                            </div>
+                            <div class="ms-auto">
+                                {% if post.user == user.username%}
+                                <div class="dropdown d-flex">
+                                    <a class="btn btn-sm dropdown-toggle  " role="button"
+                                       data-bs-toggle="dropdown"
+                                       aria-expanded="false">
+                                        Редактировать
+                                    </a>
+                                    <div class="dropdown-menu p-2" style="width: 230px">
+                                        <div class="mt-2">
+                                            <form action="deletepost" method="post">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="pk" value="{{post.id}}">
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    Удалить пост
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <div class="mt-2 mx-auto">
+                                            <!-- Кнопка-триггер модального окна -->
+                                            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal"
+                                                    data-bs-target="#updateModal{{post.pk}}">
+                                                Редактировать пост
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+
+                        <!-- Модальное окно -->
+                        <div class="modal fade" id="updateModal{{post.pk}}" tabindex="-1"
+                             aria-labelledby="updateModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="updateModalLabel">Отредактировать пост
+                                        </h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Закрыть"></button>
+                                    </div>
+                                    <form action="updatepost" method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="modal-body">
+                                            {% if post.image.url != Null %}
+                                            <img src="{{post.image.url}}"
+                                                 alt="image 1" class="w-100">
+                                            {% endif %}
+                                            <input type="hidden" name="pk" value="{{post.pk}}">
+                                            <div class="mt-3">
+                                                <label for="post_photo">Новое фото</label>
+                                                <input type="file" name="image" id="post_photo" class="form-control">
+                                            </div>
+                                            <div class="mt-3">
+                                                <label  for="post_text">Новый текст</label>
+                                                <textarea name="caption" required class="form-control" id="post_text" rows="3">
+                                                    {{post.caption}}
+                                                </textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                Закрыть
+                                            </button>
+                                            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr style="margin-bottom: 0px ; margin-top: 4px">
+                        {% if post.image.url != Null %}
+                        <img src="{{post.image.url}}"
+                             alt="image 1" class="w-100  ">
+                        {% endif %}
+                        <div class="card-body">
+                            {% if post.no_of_likes == 0 %}
+                            <span class="card-title">No likes</span>
+                            {% elif post.no_of_likes == 1 %}
+                            <span class="card-title">Liked by {{post.no_of_likes}} person </span>
+                            {% else %}
+                            <span class="card-title">Liked by {{post.no_of_likes}} people </span>
+                            {% endif %}
+                            <a href="/like-post?post_id={{post.id}}">
+                                {% if post.user == user.username %}
+                                <img src="{%static 'social_book/images/heart2.svg'%}" width="25" alt="">
+                                {% else %}
+                                <img src="{%static 'social_book/images/heart2.svg'%}" width="25" alt="">
+                                {% endif %}
+                            </a>
+                            <p class="card-text"><strong> @{{post.user}} </strong> : {{post.caption}}</p>
+                            <p class="card-text"><small class="text-muted">{{post.created_at}}</small></p>
+
+                            <!-- Кнопка-триггер модального окна -->
+                            <a type="button" class="text-decoration-none link-secondary"
+                               data-bs-toggle="modal"
+                               data-bs-target="#exampleModal{{post.pk}}">
+                                Посмотреть все комментарии
+                            </a>
+
+                            <div class="modal fade" id="exampleModal{{post.pk}}" tabindex="-1"
+                                 aria-labelledby="exampleModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog modal-xl modal-dialog-scrollable   ">
+                                    <div class="modal-content " style="height: 1200px">
+                                        <div class="modal-header">
+                                            </h5><h5 class="modal-title" id="exampleModalLabel"><a
+                                                class="text-decoration-none text-dark" href="/profile/{{post.user}}">
+                                            @{{post.user}} </a></h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Закрыть"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row d-flex">
+                                                <div class="me-auto col-6  ">
+                                                    {% if post.image.url != Null %}
+                                                    <img src="{{post.image.url}}"
+                                                         alt="image 1" class=" w-100 ">
+                                                    {% else %}
+                                                    <div class="col-6 mx-auto mt-5">
+                                                        <p class="mt-5">
+                                                            Автор не опубликовал фото
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                 height="16"
+                                                                 fill="currentColor" class="bi bi-emoji-frown"
+                                                                 viewBox="0 0 16 16">
+                                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                                                <path d="M4.285 12.433a.5.5 0 0 0 .683-.183A3.498 3.498 0 0 1 8 10.5c1.295 0 2.426.703 3.032 1.75a.5.5 0 0 0 .866-.5A4.498 4.498 0 0 0 8 9.5a4.5 4.5 0 0 0-3.898 2.25.5.5 0 0 0 .183.683zM7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z"/>
+                                                            </svg>
+                                                        </p>
+
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="ms-auto col-6">
+                                                    <div>
+                                                        <strong> <a
+                                                                class="text-decoration-none text-dark"
+                                                                href="/profile/{{post.user}}">
+                                                            @{{post.user}} </a> </strong> :
+                                                        {{post.caption}}
+                                                    </div>
+                                                    <div style="font-weight: 500">
+                                                        {% if post.no_of_likes == 0 %}
+                                                        <span class="card-title">No likes</span>
+                                                        {% elif post.no_of_likes == 1 %}
+                                                        <span class="card-title">Liked by {{post.no_of_likes}} person </span>
+                                                        {% else %}
+                                                        <span class="card-title">Liked by {{post.no_of_likes}} people </span>
+                                                        {% endif %}
+                                                        <a href="/like-post?post_id={{post.id}}">
+                                                            {% if post.user == user.username %}
+                                                            <img src="{%static 'social_book/images/heart2.svg'%}"
+                                                                 width="25" alt="">
+                                                            {% else %}
+                                                            <img src="{%static 'social_book/images/heart2.svg'%}"
+                                                                 width="25" alt="">
+                                                            {% endif %}
+                                                        </a>
+                                                    </div>
+                                                    <small>
+                                                        {{post.created_at}}
+                                                    </small>
+
+                                                    <hr>
+                                                    <div>
+                                                        {% if not post.comments.all%}
+
+                                                        <p class="text-muted"><small> Пока нет коментариев</small></p>
+
+                                                        {% else %}
+
+                                                        {% for comment in post.comments.all%}
+                                                        <div>
+                                                            <div class="mt-1 ">
+                                                                <strong>
+                                                                    <a class="text-decoration-none text-dark"
+                                                                       href="/profile/{{comment.commenter_name}}">
+                                                                        @{{comment.commenter_name}}</a>
+                                                                    :</strong>{{comment.comment_body}}
+                                                            </div>
+                                                            <div class="d-flex">
+                                                                <small>
+                                                                    {{comment.date_added}}
+                                                                </small>
+                                                                {% if user.username == comment.commenter_name %}
+                                                                <form action="deletecomment" method="post">
+                                                                    {% csrf_token %}
+                                                                    <input type="hidden" name="pk"
+                                                                           value="{{comment.id}}">
+                                                                    <a href="" class="mx-2">
+                                                                        <button type="submit"
+                                                                                style="padding:0;  "
+                                                                                class="link-danger btn me-2">
+                                                                            <small>
+                                                                                delete
+                                                                            </small>
+                                                                        </button>
+                                                                    </a>
+                                                                </form>
+                                                                {% endif %}
+                                                            </div>
+
+                                                        </div>
+
+                                                        {% endfor %}
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer py-1 mb-1">
+                                            <div class="ms-auto col-6   ">
+                                                <div class="mt-2">
+                                                    <form class="mb-0" action="/addcomment" method="POST">
+                                                        <div class="d-flex ">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="pk" value="{{post.id}}">
+                                                            <input type="text" name="comment_body" required
+                                                                   class="form-control commentary-form "
+                                                                   placeholder="Добавить коментарий..."
+                                                                   style="border: 0">
+                                                            <div class="ms-auto">
+                                                                <button type="submit" class="text-primary btn">
+                                                                    Опубликовать
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="friends ">
+            <div class="  mb-3">
+                <div class="nav-item dropdown d-flex">
+                    <button class="btn btn-warning dropdown-toggle ms-auto " role="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        Upload new Post
+                    </button>
+                    <div class="dropdown-menu p-3">
+                        <form action="/upload" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="mt-3">
+                                <h5>Опубликовать новый пост</h5>
+                            </div>
+                            <div class="mt-3">
+                                <input name="image_upload" type="file" class="form-control">
+                            </div>
+                            <div class="mt-3">
+                                <label for="caption">Введите текст</label>
+                                <textarea required name="caption" id="caption" class="form-control"
+                                          rows="3"></textarea>
+                            </div>
+                            <div class="mt-3">
+                                <button type="submit" class="btn  " style="background: #E4F64A">Upload</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="card ">
+                <div class="card-body    ">
+                    <h5 class="card-title">Users you can Follow</h5>
+                    {% for suggestion in suggestions_username_profile_list%}
+                    <div class="mt-1 p-1 d-flex">
+                        <div>
+                            <img class="suggestion_photo" src="{{suggestion.profileimg.url}}" alt="...">
+                        </div>
+                        <div class="mx-2">
+                            <a href="/profile/{{suggestion.user}}"
+                               class="card-text text-decoration-none text-dark ">
+                                <h6>{{suggestion.user}} </h6></a>
+                            <p class="card-text">{{suggestion.bio|truncatewords:4}}</p>
+                        </div>
+                        <div class=" ms-auto">
+                            <a href="/profile/{{suggestion.user}}" class="btn btn-outline-danger btn-sm w-100">View
+                                profile</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{%endblock%}

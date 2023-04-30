@@ -1,0 +1,61 @@
+{%extends 'messenger/base.html'%}
+{%block content%}
+{%load static%}
+{% load messenger_tags %}
+
+<div class="container mt-5">
+    <div class="filter-container">
+        <div class="filter" style="height: 700px">
+            <h4>Фильтр</h4>
+            <hr>
+            <h5>По жанрам:</h5>
+
+            <li><a class="text-info" href="{%url 'booksPage'%}">Все </a></li>
+
+            {% for g in genre %}
+
+            {%if g.book__count > 0 %}
+            {% if g.pk == genre_selected%}
+            <li class="selected"> {{g.name}}</li>
+            {%else%}
+            <li><a href="{{g.get_absolute_url}}">{{g.name}}</a></li>
+            {%endif%}
+            {%endif%}
+            {%endfor%}
+
+
+            {% show_genres 'name' genre_selected %}
+            <h5>По Авторам:</h5>
+            {% show_authors 'name' author_selected %}
+        </div>
+        <div class="books-list mb-3">
+            <div class="row row-cols-1 row-cols-md-4 row-cols-lg-5 g-4">
+                {% for i in books %}
+                <div class="col-6 col-md-6 col-lg-3">
+                    <div class="card h-100 card-anim">
+                        {% if i.photo %}
+                        <img src="{{i.photo.url}}" style="object-fit: cover ; height:  300px" class="card-img-top"
+                             alt="...">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{i.name}}</h5>
+                            <b> Автор:</b> {{i.author}}
+                            <br>
+                            <b> Жанр:</b> {% for genre in i.genre.all %}
+                                {{ genre.name }}
+                            {% endfor %}
+                        </div>
+                        <div class="card-footer">
+                            <a class="btn btn-primary btn-sm " href="{{ i.get_absolute_url }}">Подробнее</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+{%endblock%}

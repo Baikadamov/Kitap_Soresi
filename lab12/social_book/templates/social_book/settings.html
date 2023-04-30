@@ -1,0 +1,131 @@
+{%extends 'messenger/base.html'%}
+{%load static%}
+{%block content%}
+<div class="container mt-5">
+    <div class="d-flex">
+        <h4 class="">Account settings
+        </h4>
+        {% for m in messages%}
+        <span class="text-success ms-auto">{{m}}</span>
+        {% endfor %}
+    </div>
+
+
+    <div class="row gutters g-3">
+        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+            <div class="card h-100  ">
+                <div class="card-body">
+                    <div>
+                        <div class="mt-3">
+                            <p class="text-center">
+                                <img width="200" src="{{user_profile.profileimg.url}}" alt="">
+                            </p>
+                        </div>
+                        <div>
+                            <h3 class="user-name"> {{user.username}}</h3>
+                            <h6 class="user-email">{{user.email}}</h6>
+                        </div>
+                        <div class="about">
+                            <h5>BIO</h5>
+                            <p>{{user_profile.bio|truncatewords:30}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+            <div class="card h-100">
+                <div class="card-body">
+                    <form action="" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row gutters">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <h6 class="mb-2 text-primary">Редактирование профиля</h6>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 mt-2">
+                                <div class="form-group">
+                                    <label for="number">Номер телефона</label>
+                                    <input name="number" type="number" class="form-control" id="number"
+                                           value="{{user_profile.number}}">
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 mt-2">
+                                <div class="form-group">
+                                    <label for="address">Адресс</label>
+                                    <input name="location" type="text" class="form-control" id="address"
+                                           placeholder="Введите адресс"
+                                           value="{{user_profile.location}}">
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 mt-2">
+                                <div class="form-group">
+                                    <label for="photo">Фото профиля</label>
+                                    <input name="image" type="file" class="form-control" id="photo"
+                                    >
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 mt-2">
+                                <div class="form-group">
+                                    <label for="contacts">Контакты</label>
+                                    <input name="contacts" placeholder="Введите контакты для связи"
+                                           value="{{user_profile.contacts}}" type="text" class="form-control"
+                                           id="contacts"
+                                    >
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 mt-2">
+                                <div class="form-group">
+                                    <label for="city">Город</label>
+                                    <select class="form-control" name="city" id="city">
+                                        {% for city in cities %}
+                                        {% if user_profile.city == city %}
+                                        <option value="{{ city.id }}" selected> {{ city }}</option>
+                                        {% else %}
+                                        <option value="{{ city.id }}">{{ city }}</option>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 mt-2">
+                                <div class="form-group">
+                                    <label> Интересы</label>
+                                    <br>
+                                    {% for interest in interests %}
+                                    <div class="form-check form-check-inline">
+                                        {% if interest in user_interests %}
+                                        <input class="form-check-input" checked name="{{ interest.id }}" type="checkbox"
+                                               value="{{ interest.id }}">
+                                        {% else %}
+                                        <input class="form-check-input" name="{{ interest.id }}" type="checkbox"
+                                               value="{{ interest.id }}">
+                                        {% endif %}
+                                        <label class="form-check-label">{{ interest }}</label>
+                                    </div>
+                                    {% endfor %}
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row gutters">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                                <label for="bio" class="mt-3 mb-2 text-primary">BIO</label>
+                                <textarea name="bio" class="form-control" id="bio"
+                                          rows="6"> {{user_profile.bio}}</textarea>
+                            </div>
+                            <div class="row gutters mt-3">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="text-right">
+                                        <button type="submit" name="submit" class="btn btn-primary">Update</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{%endblock%}

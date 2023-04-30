@@ -1,0 +1,43 @@
+{%extends 'messenger/base.html'%}
+{%load static%}
+{%block content%}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-8 mx-auto">
+            <div class="row">
+                {% for friend in friends %}
+                {% if friend.profile.user.username != user.username %}
+                <div class="card mt-3 ">
+                    <div class="row ">
+                        <div class="col-md-2   row align-center">
+                            {% if friend.profile.profileimg.url != null %}
+                            <img src="{{friend.profile.profileimg.url}}" width="75" alt="">
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card-body px-0">
+                                <a class="text-decoration-none text-dark "
+                                   href="/profile/{{friend.profile.user.username}}">
+                                    <strong> {{friend.profile.user.username}}</strong>
+                                </a>
+                                <br>
+                                <span>{{friend.profile.bio|truncatewords:5}} </span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card-body px-0">
+                                <p class="text-end px-0">
+                                    <a class="btn btn-warning btn-sm " href="{% url 'friend' friend.profile.id %}">Написать
+                                        сообщение</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}

@@ -1,0 +1,296 @@
+{%extends 'messenger/base.html'%}
+{%load static%}
+{%block content%}
+
+<section class="h-100 gradient-custom-2">
+    <div class=" container pb-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center  ">
+            <div class="col-12  ">
+                <div class="card">
+                    <div class="rounded-top text-white d-flex flex-row"
+                         style="background-color: #E4F64A; height:200px;">
+                        <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
+                            <img src="{{user_profile.profileimg.url}}"
+                                 alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2"
+                                 style="width: 150px; z-index: 1">
+                            {% if user.username == user_profile.user.username %}
+                            <a href="{% url 'settings' %}" class="btn btn-dark" data-mdb-ripple-color="dark"
+                               style="z-index: 1;">
+                                Редактировать
+                            </a>
+                            {% endif %}
+                            <br>
+                        </div>
+                        <div class="ms-3 text-dark" style="margin-top: 150px;  ">
+                            <h4>@{{user_profile.user.username}}</h4>
+                            <br>
+                        </div>
+                    </div>
+                    <div class="p-4 text-black" style="background-color: #f8f9fa;">
+                        <div class="d-flex justify-content-end text-center py-1">
+                            <div>
+                                {% if user_posts_length == 0 %}
+                                <p class="mb-1 h5">{{user_posts_length}} </p>
+                                <p class="small text-muted mb-0">No Post</p>
+                                {% elif user_posts_length == 1 %}
+                                <p class="mb-1 h5">{{user_posts_length}} </p>
+                                <p class="small text-muted mb-0"> Post</p>
+                                {% else %}
+                                <p class="mb-1 h5">{{user_posts_length}} </p>
+                                <p class="small text-muted mb-0">Posts</p>
+                                {% endif %}
+                            </div>
+                            <div class="px-3">
+                                {% if user_followers == 0 or user_followers == 2 %}
+                                <p class="mb-1 h5">{{user_followers}}</p>
+                                <p class="small text-muted mb-0">Follower</p>
+                                {% else %}
+                                <p class="mb-1 h5">{{user_followers}}</p>
+                                <p class="small text-muted mb-0">Followers</p>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <p class="mb-1 h5">{{user_following}}</p>
+                                <p class="small text-muted mb-0">Following</p>
+                            </div>
+                            {% if user.username != user_profile.user.username %}
+                            <div class="mx-2">
+                                <form action="/follow" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" value="{{user.username}}" name="follower"/>
+                                    <input type="hidden" value="{{user_object.username}}" name="user"/>
+                                    <button type="submit" class="btn {{button_style}}  mt-1">{{button_text}}</button>
+                                </form>
+                            </div>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                    <div class="card-body p-4 text-black">
+                        <div class="d-flex mb-5">
+                            <div>
+                                <a href="{% url 'userBooksPage' user_profile.user %}" class="btn card-anim text-white"
+                                   style=" background: #4e63d7">
+                                    {% if user.username == user_profile.user.username%}
+                                    Личная Библиотека
+
+                                    {% else %}
+                                    Библиотека {{user_profile.user}}
+                                    {% endif %}
+                                </a>
+                            </div>
+                            <div class="mx-4">
+                                <a href="{% url 'wishListPage' user_profile.user %}" class="btn card-anim text-dark"
+                                   style="background: #E4F64A">
+                                    {% if user.username == user_profile.user.username%}
+                                    Виш-лист
+                                    {% else %}
+                                    Виш-лист {{user_profile.user}}
+                                    {% endif %}
+                                </a>
+                            </div>
+
+                        </div>
+                        <div class="mb-5">
+                            <div class="mt-3  ">
+                                <h4 class="display-6" style="font-size: 30px"> Информация </h4>
+                            </div>
+                            <dl class="row mb-3">
+                                <dt class="col-sm-3 lead">Город</dt>
+                                <dd class="col-sm-9">{{user_profile.city}}</dd>
+
+                                <dt class="col-sm-3 lead">Адрес</dt>
+                                <dd class="col-sm-9">
+                                    {{user_profile.location}}
+                                </dd>
+
+                                <dt class="col-sm-3 lead">Контакты</dt>
+                                <dd class="col-sm-9">{{user_profile.contacts}}</dd>
+
+                                <dt class="col-sm-3 lead">Номер телефона</dt>
+                                <dd class="col-sm-9">{{user_profile.number}}</dd>
+
+                                <dt class="col-sm-3 lead">Интересы</dt>
+                                <dd class="col-sm-9">
+                                    {% for interest in user_profile.interests.all %}
+                                    {{ interest.name }} *
+                                    {% endfor %}
+                                </dd>
+                            </dl>
+                            <p class="display-6 mt-5" style="font-size: 28px" >О себе</p>
+                            <div class="p-4" style="background-color: #f8f9fa;">
+                                <p>{{user_profile.bio}}</p>
+                            </div>
+                        </div>
+                        {% if user.username == user_profile.user.username %}
+                        <div>
+                            <div class=" mb-3">
+                                <div class="nav-item dropdown d-flex">
+                                    <button class="btn btn-warning dropdown-toggle ms-auto " role="button"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                       Сделать новый пост
+                                    </button>
+                                    <div class="dropdown-menu p-3">
+                                        <form action="/upload" method="POST" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            <div class="mt-3">
+                                                <h5>Опубликовать новый пост</h5>
+                                            </div>
+                                            <div class="mt-3">
+                                                <input name="image_upload" type="file" class="form-control">
+                                            </div>
+                                            <div class="mt-3">
+                                                <label for="caption">Введите текст</label>
+                                                <textarea required name="caption" id="caption" class="form-control"
+                                                          rows="3"></textarea>
+                                            </div>
+                                            <div class="mt-3">
+                                                <button type="submit" class="btn  " style="background: #E4F64A">Upload
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <p class="lead display-6  mb-0" style="font-size: 28px">Последние публикации</p>
+                        </div>
+                        <div class="d-flex justify-content-center row">
+                            <div class="col-8 ">
+                                {% for m in messages%}
+                                <h6 class="text-primary ms-auto">{{m}}</h6>
+                                {% endfor %}
+                            </div>
+
+                            {% for post in user_posts reversed%}
+                            <div class="col-8 mb-5">
+                                <div class="card">
+                                    <div class="d-flex px-3 pt-2">
+                                        <div>
+                                            <h5>
+                                                <a class="text-decoration-none text-dark"
+                                                   href="/profile/{{post.user}}">
+                                                    @{{post.user}} </a></h5>
+                                        </div>
+                                        <div class="ms-auto">
+                                            {% if post.user == user.username%}
+                                            <div class="dropdown d-flex">
+                                                <a class="btn btn-sm dropdown-toggle  " role="button"
+                                                   data-bs-toggle="dropdown"
+                                                   aria-expanded="false">
+                                                    Редактировать
+                                                </a>
+                                                <div class="dropdown-menu p-2" style="width: 230px">
+                                                    <div class="mt-2" style="background-color: #f8f9fa;">
+                                                        <form action="/deletepost" method="post">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="pk" value="{{post.id}}">
+                                                            <button type="submit" class="btn text-danger  btn-sm">
+                                                                Удалить пост
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                    <div class="mt-2 mx-auto" style="background-color: #f8f9fa;">
+                                                        <!-- Кнопка-триггер модального окна -->
+                                                        <button type="button" class="btn text-success btn-sm "
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#updateModal{{post.pk}}">
+                                                            Редактировать пост
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <!-- Модальное окно -->
+                                    <div class="modal fade" id="updateModal{{post.pk}}" tabindex="-1"
+                                         aria-labelledby="updateModalLabel"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title fs-5" id="updateModalLabel">Отредактировать
+                                                        пост
+                                                    </h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Закрыть"></button>
+                                                </div>
+                                                <form action="/updatepost" method="post"
+                                                      enctype="multipart/form-data">
+                                                    {% csrf_token %}
+                                                    <div class="modal-body">
+                                                        {% if post.image.url != Null %}
+                                                        <img src="{{post.image.url}}"
+                                                             alt="image 1" class="w-100">
+                                                        {% endif %}
+                                                        <input type="hidden" name="pk" value="{{post.pk}}">
+                                                        <div class="mt-3">
+                                                            <label for="post_photo">Новое фото</label>
+                                                            <input type="file" name="image" id="post_photo"
+                                                                   class="form-control">
+                                                        </div>
+                                                        <div class="mt-3">
+                                                            <label for="post_text">Новый текст</label>
+                                                            <textarea type="text" placeholder="Type something..."
+                                                                      name="caption" required class="form-control"
+                                                                      id="post_text" rows="3">
+                                                    {{post.caption}}
+                                                </textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">
+                                                            Закрыть
+                                                        </button>
+                                                        <button type="submit" class="btn btn-primary">Сохранить
+                                                            изменения
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <hr style="margin-bottom: 0px ; margin-top: 4px">
+                                    {% if post.image.url != Null %}
+                                    <img src="{{post.image.url}}"
+                                         alt="image 1" class="w-100  ">
+                                    {% endif %}
+                                    <div class="card-body">
+                                        <p class="card-text">{% if post.no_of_likes == 0 %}
+                                            <span class="card-title">No likes</span>
+                                            {% elif post.no_of_likes == 1 %}
+                                            <span class="card-title">Liked by {{post.no_of_likes}} person </span>
+                                            {% else %}
+                                            <span class="card-title">Liked by {{post.no_of_likes}} people </span>
+                                            {% endif %}
+                                            <a href="/like-post?post_id={{post.id}}">
+                                                {% if post.user == user.username %}
+                                                <img src="{%static 'social_book/images/heart2.svg'%}" width="25" alt="">
+                                                {% else %}
+                                                <img src="{%static 'social_book/images/heart2.svg'%}" width="25" alt="">
+                                                {% endif %}
+                                            </a>
+                                        </p>
+                                        <p class="card-text"><b>{{post.user}} : </b> {{post.caption}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{%endblock%}
